@@ -1,7 +1,7 @@
 pragma solidity ^0.6.6;
 
 import "@studydefi/money-legos/curvefi/contracts/ICurveFiCurve.sol";
-/* import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; */
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract curveTest {
 
