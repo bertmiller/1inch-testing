@@ -27,6 +27,25 @@ contract UniTest {
     dai = IERC20(dai_address);
   }
 
+  function uniTest(uint amount, address token) public payable {
+    /* Create instances of DAI and USDC to interact with */
+    IERC20 usdc = IERC20(usdc_address);
+
+    /* Perform swap on UniSwap */
+    convertETHToToken(amount, token, address(this));
+
+    /* Get the balance of the resulting DAI */
+    uint256 daiBal = dai.balanceOf(address(this));
+
+    require(daiBal > 0, "No dai to trade.");
+
+    /* Swap it for USDC on Curve */
+    curveSwap(daiIndex, usdcIndex, daiBal);
+
+    /* uint256 usdcBal = usdc.balanceOf(address(this)); */
+    /* usdc.transfer(msg.sender, usdcBal); */
+  }
+
   function convertETHToToken(uint amount, address token, address to) public payable {
     // Inputs //
     // amount: amount of token (note that the token may have many decimals)
@@ -59,7 +78,7 @@ contract UniTest {
     dai.transfer(to, daiBal);
   }
 
-function curveSwap(int128 from, int128 to, uint256 amount) public payable {
+  function curveSwap(int128 from, int128 to, uint256 amount) public payable {
     /* Check the amount of the stable coin you'd get */
     uint min_bal = getSwapInfo(from, to, amount);
 
@@ -71,26 +90,7 @@ function curveSwap(int128 from, int128 to, uint256 amount) public payable {
 
     /* Perform a swap on Curve */
     curve.exchange_underlying(from, to, amount, 1);
-}
-
-function uniTest(uint amount, address token) public payable {
-  /* Create instances of DAI and USDC to interact with */
-  IERC20 usdc = IERC20(usdc_address);
-
-  /* Perform swap on UniSwap */
-  convertETHToToken(amount, token, address(this));
-
-  /* Get the balance of the resulting DAI */
-  uint256 daiBal = dai.balanceOf(address(this));
-
-  require(daiBal > 0, "No dai to trade.");
-
-  /* Swap it for USDC on Curve */
-  curveSwap(daiIndex, usdcIndex, daiBal);
-
-  /* uint256 usdcBal = usdc.balanceOf(address(this)); */
-  /* usdc.transfer(msg.sender, usdcBal); */
-}
+  }
 
   receive() payable external {} // allows it to take ETH
 }
