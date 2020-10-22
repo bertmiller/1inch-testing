@@ -16,25 +16,15 @@ contract oneinchtest {
 
     address public constant OneInchAddress = 0xC586BeF4a0992C495Cf22e1aeEE4E446CECDee0E;
 
-    mapping (int128 => address) curve_addresses;
-    mapping (int128 => address) addresses;
-
     IOneSplit public oneinch;
 
     constructor() public {
-        curve_addresses[0] = DAI;
-        curve_addresses[1] = USDC;
-        curve_addresses[2] = USDT;
-        curve_addresses[3] = sUSD;
-
-        addresses[0] = ETH;
-
         oneinch = IOneSplit(OneInchAddress);
     }
 
     function getExpectedReturn(uint256 amountWei) public view returns(uint256 returnAmount, uint256[] memory distribution) {
-        IERC20 _from = IERC20(curve_addresses[0]);
-        IERC20 _to = IERC20(curve_addresses[1]);
+        IERC20 _from = IERC20(DAI);
+        IERC20 _to = IERC20(USDC);
 
         (uint256 returnAmount, uint256[] memory distribution) = oneinch.getExpectedReturn(_from, _to, amountWei, 10, 0);
 
@@ -42,8 +32,8 @@ contract oneinchtest {
     }
 
     function oneinchswap(uint256 amountWei, uint256 returnAmount, uint256[] memory distribution) public payable {
-        IERC20 _from = IERC20(curve_addresses[0]);
-        IERC20 _to = IERC20(curve_addresses[1]);
+        IERC20 _from = IERC20(DAI);
+        IERC20 _to = IERC20(USDC);
 
         _from.approve(OneInchAddress, amountWei);
 
@@ -60,6 +50,6 @@ contract oneinchtest {
             0
         );
 
-        emit LogBuy(curve_addresses[0], curve_addresses[1], amountWei, returnAmount);
+        emit LogBuy(DAI, USDC, amountWei, returnAmount);
     }
 }
